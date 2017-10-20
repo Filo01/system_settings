@@ -12,11 +12,14 @@ Plugin 'nvie/vim-flake8'
 Plugin 'jnurmine/Zenburn'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'ap/vim-buftabline'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 Bundle 'Valloric/YouCompleteMe'
 Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
 Plugin 'jmcantrell/vim-virtualenv'
-
+Plugin 'vim-scripts/vim-auto-save'
+Plugin 'qpkorr/vim-bufkill'
+Plugin 'dbakker/vim-projectroot'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -33,13 +36,10 @@ filetype plugin indent on    " required
 " Put your non-Plugin stuff after this line
 
 " NerdTree
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-autocmd vimenter * NERDTree
-autocmd VimEnter * wincmd p
 map <F3> :NERDTreeToggle<CR>
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
 
 "highlighting
 let python_highlight_all=1
@@ -61,8 +61,22 @@ set wildignore+=*/__pycache__/*,*.py[cod],*.class
 set wildignore+=*/.Python/*,*/env/*,*/build/*,*/develop-eggs/*,*/dist/*,*/downloads/*,*/eggs/*,*/.eggs/*,*/lib/*,*/lib64/*,*/parts/*,*/sdist/*,*/var/*,*/wheels/*,*/.idea/*,*.egg-info/*,*/.installed.cfg*,*.egg/*
 set wildignore+=*.manifest,*.spec
 
+" Use the 'wildignore' and 'suffixes' settings for filtering out files.
+function! s:FileGlobToRegexp( glob )
+" The matching is done against the sole file / directory name.
+  if a:glob =~# '^\*\.'
+     return '\.' . a:glob[2:] . '$'
+  else
+     return '^' . a:glob . '$'
+  endif
+endfunction
+let g:NERDTreeIgnore =  map(split(&wildignore, ','),'s:FileGlobToRegexp(v:val)') 
+delfunction s:FileGlobToRegexp
+
+
 " tabline
-set hidden
+
+let g:airline#extensions#tabline#enabled = 1
 nnoremap <C-N> :bnext<CR>
 nnoremap <C-P> :bprev<CR>
 
@@ -70,6 +84,16 @@ nnoremap <C-P> :bprev<CR>
 let g:ycm_autoclose_preview_window_after_completion=1
 map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
+
+function! <SID>AutoProjectRootCD()
+  try
+    if &ft != 'help'
+      ProjectRootCD
+    endif
+  catch
+    " Silently ignore invalid buffers
+  endtry
+endfunction
 
 " Indentation
 au BufNewFile,BufRead *.py |
@@ -80,9 +104,16 @@ au BufNewFile,BufRead *.py |
     \ set expandtab |
     \ set autoindent |
     \ set fileformat=unix |
+    \ autocmd vimenter * NERDTree |
+    \ autocmd BufEnter * call<SID>AutoProjectRootCD() |
+    \ autocmd VimEnter * wincmd p |
 
 set cursorline
 set showmatch
 
+let g:auto_save = 1  " enable AutoSave on Vim startup
 
+map <C-c> :BD<cr> " kill buffer with ctrl - c
 
+set shortmess=a
+set cmdheight=2
