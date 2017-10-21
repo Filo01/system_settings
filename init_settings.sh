@@ -14,7 +14,7 @@ source /usr/local/bin/virtualenvwrapper.sh
 export PROJECT_HOME=~/PythonProjects
 echo "pip install pylint" >> $WORKON_HOME/postmkproject
 echo "pip install autopep8" >> $WORKON_HOME/postmkproject
-echo "if [ -n \"'\$VIRTUAL_ENV\" ]; then
+echo "if [ -n \"\$VIRTUAL_ENV\" ]; then
     source \$VIRTUAL_ENV/bin/activate;
     fi" >> ~/.bashrc
 echo "if [[ -n \"\$TMUX\" ]]; then
