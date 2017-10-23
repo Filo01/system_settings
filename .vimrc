@@ -1,9 +1,6 @@
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
 
-" let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'Xuyuanp/nerdtree-git-plugin'
@@ -12,31 +9,22 @@ Plugin 'nvie/vim-flake8'
 Plugin 'jnurmine/Zenburn'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
 Bundle 'Valloric/YouCompleteMe'
-Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
-Plugin 'jmcantrell/vim-virtualenv'
 Plugin 'vim-scripts/vim-auto-save'
 Plugin 'qpkorr/vim-bufkill'
+Plugin 'tell-k/vim-autopep8'
 Plugin 'dbakker/vim-projectroot'
-" All of your Plugins must be added before the following line
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'tweekmonster/impsort.vim'
+Plugin 'ap/vim-buftabline'
+Plugin 'tpope/vim-fugitive'
+Plugin 'benmills/vimux'
+Plugin 'christoomey/vim-tmux-navigator'
 call vundle#end()            " required
 filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
-"
-" Brief help
-" :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
-"
-" see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line
 
 " NerdTree
-map <F3> :NERDTreeToggle<CR>
 let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
@@ -57,7 +45,7 @@ endif
 set nu
 
 " ctrl P
-set wildignore+=*/__pycache__/*,*.py[cod],*.class
+set wildignore+=*__pycache__*,*.py[cod],*.class
 set wildignore+=*/.Python/*,*/env/*,*/build/*,*/develop-eggs/*,*/dist/*,*/downloads/*,*/eggs/*,*/.eggs/*,*/lib/*,*/lib64/*,*/parts/*,*/sdist/*,*/var/*,*/wheels/*,*/.idea/*,*.egg-info/*,*/.installed.cfg*,*.egg/*
 set wildignore+=*.manifest,*.spec
 
@@ -72,17 +60,11 @@ function! s:FileGlobToRegexp( glob )
 endfunction
 let g:NERDTreeIgnore =  map(split(&wildignore, ','),'s:FileGlobToRegexp(v:val)') 
 delfunction s:FileGlobToRegexp
+let g:NERDTreeIgnore += ['.*__pycache__.*', '.*/\.Python.*', '.*/env.*','.*build.*', '.*\.egg.*', '.*dist.*' ]
 
-
-" tabline
-
-let g:airline#extensions#tabline#enabled = 1
-nnoremap <C-N> :bnext<CR>
-nnoremap <C-P> :bprev<CR>
 
 " Autocomplete
 let g:ycm_autoclose_preview_window_after_completion=1
-map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
 
 function! <SID>AutoProjectRootCD()
@@ -95,6 +77,7 @@ function! <SID>AutoProjectRootCD()
   endtry
 endfunction
 
+
 " Indentation
 au BufNewFile,BufRead *.py |
     \ set tabstop=4 |
@@ -104,16 +87,43 @@ au BufNewFile,BufRead *.py |
     \ set expandtab |
     \ set autoindent |
     \ set fileformat=unix |
-    \ autocmd vimenter * NERDTree |
-    \ autocmd BufEnter * call<SID>AutoProjectRootCD() |
-    \ autocmd VimEnter * wincmd p |
+    \ set cmdheight=1 |
+    \ au VimEnter *.py NERDTree | wincmd p
+autocmd BufEnter * call<SID>AutoProjectRootCD() |
+autocmd BufWritePre *.py ImpSort! 
 
+"let g:auto_save = 1  " enable AutoSave on Vim startup
+"let g:auto_save_in_insert_mode = 0
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 1  
+
+set cursorcolumn
 set cursorline
 set showmatch
-
-let g:auto_save = 1  " enable AutoSave on Vim startup
-
-map <C-c> :BD<cr> " kill buffer with ctrl - c
-
 set shortmess=a
 set cmdheight=2
+
+" kill buffer with ctrl-c
+map <C-c> :BD<cr> 
+
+map <F5> :call VimuxRunCommand("clear; python " . expand("%:p"))<CR>
+map <F6> :call VimuxRunCommand("clear; python -m unittest")<CR> 
+map <Leader>vp :VimuxPromptCommand<CR>
+map <Leader>vl :VimuxRunLastCommand<CR> 
+map <Leader>vz :VimuxZoomRunner<CR>
+map <Leader>vi :VimuxInspectRunner<CR>
+map <F3> :NERDTreeToggle<CR> 
+map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>  
+" Go to next tab
+nnoremap <Tab> :bnext<CR>  
+augroup vimrc-auto-mkdir
+  autocmd!
+  autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
+  function! s:auto_mkdir(dir, force)
+    if !isdirectory(a:dir)
+          \   && (a:force
+          \       || input("'" . a:dir . "' does not exist. Create? [y/N]") =~? '^y\%[es]$')
+      call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
+    endif
+  endfunction
+augroup END
