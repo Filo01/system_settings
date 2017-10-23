@@ -12,10 +12,11 @@ function start_tmux {
 }
 
 function create_new {
+	
 	tmux new-session -s $fbname \; \
-	        send-keys 'vim ' "$2" C-m \; \
-	        split-window -h -p 20 \;	\
-		select-pane -L \;	
+	       	send-keys 'vim ' "$2" C-m \; \
+		split-window -v -p 20 \; \
+		select-pane -U \;	
 } 
 
 
@@ -24,3 +25,4 @@ if `git rev-parse --show-toplevel` ; then
 else
 	start_tmux $1
 fi
+
