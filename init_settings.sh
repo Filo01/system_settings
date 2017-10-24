@@ -2,12 +2,11 @@
 echo 'export TERM=xterm-256color' >> ~/.bashrc
 cd ~
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-wget https://raw.githubusercontent.com/Filo01/system_settings/master/.vimrc
+curl https://raw.githubusercontent.com/Filo01/system_settings/master/.vimrc > ~/.vimrc
 vim +PluginInstall +qall
 ~/.vim/bundle/YouCompleteMe/install.py
 
-wget https://raw.githubusercontent.com/Filo01/system_settings/master/.tmux.conf > ~/.tmux.conf
-wget https://raw.githubusercontent.com/Filo01/system_settings/master/.vimrc > ~/.vimrc
+curl https://raw.githubusercontent.com/Filo01/system_settings/master/.tmux.conf > ~/.tmux.conf
 sudo pip install virtualenvwrapper
 export WORKON_HOME=~/Envs
 source /usr/local/bin/virtualenvwrapper.sh
@@ -23,3 +22,9 @@ echo "if [[ -n \"\$TMUX\" ]]; then
 
 git clone git://github.com/kennethreitz/autoenv.git ~/.autoenv
 echo 'source ~/.autoenv/activate.sh' >> ~/.bashrc
+
+git clone https://github.com/powerline/fonts.git --depth=1
+cd fonts
+./install.sh
+cd ..
+rm -rf fonts
