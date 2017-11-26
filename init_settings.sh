@@ -4,7 +4,6 @@ cd ~
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 curl https://raw.githubusercontent.com/Filo01/system_settings/master/.vimrc > ~/.vimrc
 vim +PluginInstall +qall
-~/.vim/bundle/YouCompleteMe/install.py
 
 curl https://raw.githubusercontent.com/Filo01/system_settings/master/.tmux.conf > ~/.tmux.conf
 sudo pip install virtualenvwrapper
