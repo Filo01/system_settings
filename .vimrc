@@ -3,6 +3,10 @@ filetype off                  " required
 set rtp+=/home/filippo/.vim/bundle/Vundle.vim
 
 call vundle#begin()
+Plugin 'scrooloose/nerdtree'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes' "https://github.com/vim-airline/vim-airline/wiki/Dummies-Guide-to-the-status-bar-symbols-(Powerline-fonts)-on-Fedora,-Ubuntu-and-Windows
+" sudo apt-get install fonts-powerline
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'mbbill/undotree'
 Plugin 'airblade/vim-rooter'
@@ -50,10 +54,6 @@ colorscheme zenburn
 nnoremap <leader>s :ToggleWorkspace<CR>
 let g:workspace_session_directory = $HOME . '/.vim/sessions/'
 
-" incsearch
-map z/ <Plug>(incsearch-fuzzyspell-/)
-map z? <Plug>(incsearch-fuzzyspell-?)
-map zg/ <Plug>(incsearch-fuzzyspell-stay)
 
 set undofile
 set undodir=$HOME/.vim/undo
@@ -92,7 +92,13 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
-
+"nerdtree
+autocmd vimenter * NERDTree
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 "disabilita highlight quando entra in InsertMode
 autocmd InsertEnter * setlocal nohlsearch
@@ -142,3 +148,10 @@ Arpeggio nmap ut <Esc>:UndotreeToggle<CR>
 Arpeggio nmap gp <Esc>:call UsePasteReg()<CR>
 Arpeggio noremap gj <Esc>:call GoJump()<CR>
 Arpeggio inoremap jk <Esc>
+Arpeggio map tr <Esc>:NERDTreeToggle<CR>
+
+
+
+"statusline
+let g:airline_powerline_fonts = 1
+let g:airline_solarized_bg='zenburn'
