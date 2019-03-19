@@ -4,6 +4,8 @@ filetype off                  " required
 set rtp+=/home/filippo/.vim/bundle/Vundle.vim
 
 call vundle#begin()
+Plugin 'Chiel92/vim-autoformat'
+Plugin 'wesQ3/vim-windowswap'
 Plugin 'tpope/vim-fugitive'
 Plugin 'milkypostman/vim-togglelist'
 Plugin 'unblevable/quick-scope'
@@ -60,6 +62,7 @@ let g:fzf_colors =
   \ 'marker':  ['fg', 'Keyword'],
   \ 'spinner': ['fg', 'Label'],
   \ 'header':  ['fg', 'Comment'] }
+let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore-vcs --hidden'
 nmap <leader>f :Files<CR>
 nmap <leader>b :Buffers<CR>
 nmap <leader>c :Commands<CR>
@@ -199,6 +202,7 @@ Arpeggio nmap gm <Esc>:Marks<CR>
 Arpeggio nmap gs <Esc>:Rg
 Arpeggio nmap gu <Esc>:UndotreeToggle<CR>
 Arpeggio nmap gp <Esc>:call UsePasteReg()<CR>
+Arpeggio nnoremap gw :call WindowSwap#EasyWindowSwap()<CR>
 Arpeggio noremap gj <Esc>:call GoJump()<CR>
 Arpeggio inoremap jk <Esc>
 Arpeggio map gt <Esc>:NERDTreeToggle<CR>
