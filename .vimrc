@@ -1,37 +1,48 @@
-
 set nocompatible              " be iMproved, required
 filetype off                  " required
 set rtp+=/home/filippo/.vim/bundle/Vundle.vim
 
+
 call vundle#begin()
-Plugin 'Chiel92/vim-autoformat'
-Plugin 'wesQ3/vim-windowswap'
+Plugin 'skywind3000/asyncrun.vim'
+Plugin 'prabirshrestha/asyncomplete.vim'
+Plugin 'prabirshrestha/async.vim'
+Plugin 'prabirshrestha/vim-lsp'
+Plugin 'ryanolsonx/vim-lsp-python'
+Plugin 'prabirshrestha/asyncomplete-lsp.vim'
+Plugin 'pedsm/sprint'
+Plugin 'junegunn/vim-peekaboo'
+Plugin 'idanarye/vim-merginal'
+"Plugin 'Chiel92/vim-autoformat'
+"Plugin 'wesQ3/vim-windowswap'
 Plugin 'tpope/vim-fugitive'
 Plugin 'milkypostman/vim-togglelist'
 Plugin 'unblevable/quick-scope'
 Plugin 'yggdroot/indentline'
-Plugin 'w0rp/ale'
+"Plugin 'w0rp/ale'
 Plugin 'szw/vim-maximizer'
 "Plugin 'vim-syntastic/syntastic'
 Plugin 'moll/vim-bbye'
-Plugin 'terryma/vim-multiple-cursors'
+Plugin 'diepm/vim-rest-console'
 Plugin 'vim-scripts/indentpython.vim'
 Plugin 'sheerun/vim-polyglot' "syntax highlight
 Plugin 'tmhedberg/SimpylFold'
 Plugin 'plytophogy/vim-virtualenv'
-Plugin 'davidhalter/jedi-vim'
-Plugin 'ludovicchabant/vim-gutentags'
+"Plugin 'davidhalter/jedi-vim'
+"Plugin 'ludovicchabant/vim-gutentags'
+"Plugin 'vim-scripts/cscope.vim'
 Plugin 'haya14busa/vim-asterisk'
 Plugin 'bkad/camelcasemotion'
 Plugin 'scrooloose/nerdtree'
 Plugin 'xuyuanp/nerdtree-git-plugin'
+"Plugin 'vwxyutarooo/nerdtree-devicons-syntax'
 Plugin 'vim-airline/vim-airline' " sudo apt-get install fonts-powerline
 Plugin 'vim-airline/vim-airline-themes' "https://github.com/vim-airline/vim-airline/wiki/Dummies-Guide-to-the-status-bar-symbols-(Powerline-fonts)-on-Fedora,-Ubuntu-and-Windows
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'mbbill/undotree'
 Plugin 'airblade/vim-rooter'
 Plugin 'kana/vim-arpeggio'
-Plugin 'universal-ctags/ctags'
+"Plugin 'universal-ctags/ctags'
 Plugin 'kana/vim-textobj-user'
 Plugin 'junegunn/fzf'
 Plugin 'junegunn/fzf.vim'
@@ -39,8 +50,22 @@ Plugin 'junegunn/fzf.vim'
 Plugin 'jnurmine/Zenburn'
 Plugin 'tomasiser/vim-code-dark'
 Plugin 'ekalinin/Dockerfile.vim'
+Plugin 'ryanoasis/vim-devicons' "https://github.com/ryanoasis/nerd-fonts#font-installation
+Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
+"Plugin 'habamax/vim-sendtoterm'
+"Plugin 'majutsushi/tagbar'
+Plugin 'liuchengxu/vista.vim' "sostituisce tagbar e funziona con vim-lsp
+Plugin 'vimwiki/vimwiki'
+Plugin 'Shougo/vimproc.vim' "cd ~/.vim/bundle/vimproc.vim && make
+Plugin 'idanarye/vim-vebugger'
 call vundle#end()            " required
 filetype plugin indent on    " required
+
+
+"devicons
+"set guifont=Meslo\ Font\ 11
+set guifont=DroidSansMono\ Nerd\ Font\ 11
+set encoding=utf8
 
 "Close buffer without leaving vim
 nnoremap <Leader>q :Bdelete<CR>
@@ -63,12 +88,14 @@ let g:fzf_colors =
   \ 'spinner': ['fg', 'Label'],
   \ 'header':  ['fg', 'Comment'] }
 let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore-vcs --hidden'
-nmap <leader>f :Files<CR>
-nmap <leader>b :Buffers<CR>
-nmap <leader>c :Commands<CR>
-nmap <leader>h :History<CR>
-nmap <leader>m :Marks<CR>
-nmap <leader>s :Rg
+"nmap <leader>f :Files<CR>
+"nmap <leader>b :Buffers<CR>
+"nmap <leader>c :Commands<CR>
+"nmap <leader>h :History<CR>
+"nmap <leader>m :Marks<CR>
+"nmap <leader>s :Rg
+"nnoremap <leader>d :call fzf#vim#tags(expand('<cword>'), {'options': '--exact --select-1 --exit-0'})<CR>
+"nnoremap <F4> :grep! "\<<cword>\>" . -r<CR>:copen<CR>
 
 " Color Scheme
 "colorscheme zenburn
@@ -94,6 +121,7 @@ sunmap ge
 
 set ignorecase
 set smartcase
+set showmatch
 set backspace=indent,eol,start
 set undofile
 set undodir=$HOME/.vim/undo
@@ -152,6 +180,10 @@ nnoremap U <C-R>
 "autocmd StdinReadPre * let s:std_in=1
 "autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+let g:NERDTreeFileExtensionHighlightFullName = 1
+let g:NERDTreeExactMatchHighlightFullName = 1
+let g:NERDTreePatternMatchHighlightFullName = 1
+
 
 "disabilita highlight quando entra in InsertMode
 autocmd InsertEnter * setlocal nohlsearch
@@ -194,6 +226,8 @@ function! UsePasteReg()
 endfunction
 "Arpeggio bindings
 packadd vim-arpeggio
+Arpeggio nmap tn <Esc>:tabn<CR>
+Arpeggio nmap tp <Esc>:tabp<CR>
 Arpeggio nmap gf <Esc>:Files<CR>
 Arpeggio nmap gh <Esc>:History<CR>
 Arpeggio nmap gb <Esc>:Buffers<CR>
@@ -202,10 +236,11 @@ Arpeggio nmap gm <Esc>:Marks<CR>
 Arpeggio nmap gs <Esc>:Rg
 Arpeggio nmap gu <Esc>:UndotreeToggle<CR>
 Arpeggio nmap gp <Esc>:call UsePasteReg()<CR>
-Arpeggio nnoremap gw :call WindowSwap#EasyWindowSwap()<CR>
 Arpeggio noremap gj <Esc>:call GoJump()<CR>
 Arpeggio inoremap jk <Esc>
 Arpeggio map gt <Esc>:NERDTreeToggle<CR>
+Arpeggio inoremap tb <Esc>:Vista!!<CR>
+Arpeggio nmap tb <Esc>:Vista!!<CR>
 "next buffer
 Arpeggio nmap gn <Esc>:bn<CR>
 Arpeggio nmap gl :call ToggleLocationList()<CR>
@@ -219,6 +254,8 @@ let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline#extensions#virtualenv#enabled = 1
 let g:airline#extensions#syntastic#stl_format_err = 1
 let g:airline#extensions#syntastic#stl_format_warn = 1
+let g:asyncrun_status = ''
+let g:airline_section_error = airline#section#create_right(['%{g:asyncrun_status}'])
 
 " provide hjkl movements in Insert mode via the <Alt> modifier key
 inoremap <A-h> <C-o>h
@@ -244,26 +281,24 @@ inoremap <A-l> <C-o>l
 
 
 "ale
-let g:ale_echo_msg_error_str = 'E'
-let g:ale_echo_msg_warning_str = 'W'
-let g:ale_open_list = 0
-let g:ale_set_balloons = 1
-let g:ale_cursor_detail = 0
-let g:ale_set_signs = 1
-let g:ale_completion_enabled = 1
-let g:ale_python_flake8_args = '--ignore=E,W,F403,F405 --select=F,C'
-augroup CloseLoclistWindowGroup
-    autocmd!
-    autocmd QuitPre * if empty(&buftype) | lclose | endif
-augroup END
+"let g:ale_echo_msg_error_str = 'E'
+"let g:ale_echo_msg_warning_str = 'W'
+"let g:ale_open_list = 0
+"let g:ale_set_balloons = 0
+"let g:ale_cursor_detail = 0
+"let g:ale_set_signs = 1
+"let g:ale_completion_enabled = 1
+"let g:ale_python_flake8_args = '--ignore=E,W,F403,F405 --select=F,C'
+"augroup CloseLoclistWindowGroup
+"    autocmd!
+"    autocmd QuitPre * if empty(&buftype) | lclose | endif
+"augroup END
 
-
-"indent guides
-"let g:indent_guides_start_level=2
-"let g:indent_guides_guide_size=1
 
 "gutentags
-let g:gutentags_cache_dir="/media/filippo/HDD1/pythonProjects/tags"
+"let g:gutentags_cache_dir="/media/filippo/HDD1/pythonProjects/tags"
+"let g:gutentags_module=['ctags', 'cscope']
+
 
 "vim-maximizer
 nnoremap xx :MaximizerToggle<CR>
@@ -277,3 +312,71 @@ augroup qs_colors
   autocmd ColorScheme * highlight QuickScopePrimary guifg='#7af1ff' gui=underline ctermfg=155 cterm=underline
   autocmd ColorScheme * highlight QuickScopeSecondary guifg='#f75822' gui=underline ctermfg=81 cterm=underline
 augroup END
+
+if exists("g:loaded_webdevicons")
+  call webdevicons#refresh()
+endif
+
+
+
+"cscope
+ nnoremap <leader>fa :call cscope#findInteractive(expand('<cword>'))<CR>
+
+"rest-console
+let g:vrc_set_default_mapping = 0
+autocmd FileType rest nnoremap <buffer> <CR> :call VrcQuery()<CR>
+let b:vrc_response_default_content_type = 'application/json'
+
+let g:vrc_curl_opts = {
+    \ '-i': ''
+\}
+
+
+"vim-asyncomplete
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<cr>"
+
+"vim-lsp
+let g:lsp_signs_enabled = 1         " enable signs
+let g:lsp_diagnostics_echo_cursor = 1 " enable echo under cursor when in normal mode
+
+let g:lsp_signs_warning = {'text': '!'}
+let g:lsp_signs_hint = {'text': '.'}
+let g:lsp_signs_error = {'text': '✗'}
+let g:lsp_signs_information = {'text': 'i'}
+
+function! LSP_Register(fileType)
+  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gd :LspDefinition<CR>'
+  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gD :LspDocumentDiagnostics<CR>'
+  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gh :LspHover<CR>'
+  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gf :LspDocumentFormat<CR>'
+  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gr :LspRename<CR>'
+  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> ge :LspNextError<CR>'
+  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gE :LspPreviousError<CR>'
+endfunction
+let registerList = [
+  \ 'python',
+  \ 'html',
+  \ 'css',
+  \ 'scss',
+  \ 'less',
+  \ 'sass',
+  \ 'typescript',
+  \ 'javascript',
+  \ 'json'
+  \ ]
+
+for item in registerList
+  call LSP_Register(item)
+endfor
+
+
+"vista
+let g:vista_close_on_jump = 1
+let g:vista_default_executive = 'vim_lsp'
+
+
+"vebugger
+let g:vebugger_leader='<Leader>d'
+nnoremap <Leader>dr <Esc>:VBGstartPDB %<CR>
