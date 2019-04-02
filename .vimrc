@@ -1,5 +1,5 @@
-set nocompatible              " be iMproved, required
 filetype off                  " required
+set nocompatible              " be iMproved, required
 set rtp+=/home/filippo/.vim/bundle/Vundle.vim
 
 
@@ -8,16 +8,21 @@ Plugin 'skywind3000/asyncrun.vim'
 Plugin 'prabirshrestha/asyncomplete.vim'
 Plugin 'prabirshrestha/async.vim'
 Plugin 'prabirshrestha/vim-lsp'
-Plugin 'ryanolsonx/vim-lsp-python'
 Plugin 'prabirshrestha/asyncomplete-lsp.vim'
+Plugin 'ryanolsonx/vim-lsp-python'
+Plugin 'ryanolsonx/vim-lsp-typescript' "sudo npm install -g typescript typescript-language-server
+Plugin 'ryanolsonx/vim-lsp-javascript'
+Plugin 'mattn/emmet-vim'
 Plugin 'pedsm/sprint'
 Plugin 'junegunn/vim-peekaboo'
+Plugin 'rickhowe/diffchar.vim'
+Plugin 'will133/vim-dirdiff'
+Plugin 'chrisbra/vim-diff-enhanced'
 Plugin 'idanarye/vim-merginal'
 "Plugin 'Chiel92/vim-autoformat'
 "Plugin 'wesQ3/vim-windowswap'
 Plugin 'tpope/vim-fugitive'
 Plugin 'milkypostman/vim-togglelist'
-Plugin 'unblevable/quick-scope'
 Plugin 'yggdroot/indentline'
 "Plugin 'w0rp/ale'
 Plugin 'szw/vim-maximizer'
@@ -35,21 +40,22 @@ Plugin 'haya14busa/vim-asterisk'
 Plugin 'bkad/camelcasemotion'
 Plugin 'scrooloose/nerdtree'
 Plugin 'xuyuanp/nerdtree-git-plugin'
-"Plugin 'vwxyutarooo/nerdtree-devicons-syntax'
+Plugin 'vwxyutarooo/nerdtree-devicons-syntax'
 Plugin 'vim-airline/vim-airline' " sudo apt-get install fonts-powerline
 Plugin 'vim-airline/vim-airline-themes' "https://github.com/vim-airline/vim-airline/wiki/Dummies-Guide-to-the-status-bar-symbols-(Powerline-fonts)-on-Fedora,-Ubuntu-and-Windows
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'mbbill/undotree'
 Plugin 'airblade/vim-rooter'
 Plugin 'kana/vim-arpeggio'
-"Plugin 'universal-ctags/ctags'
 Plugin 'kana/vim-textobj-user'
+Plugin 'matchit.zip'
 Plugin 'junegunn/fzf'
 Plugin 'junegunn/fzf.vim'
 "Plugin 'thaerkh/vim-workspace'
 Plugin 'jnurmine/Zenburn'
 Plugin 'tomasiser/vim-code-dark'
 Plugin 'ekalinin/Dockerfile.vim'
+Plugin 'guns/xterm-color-table.vim'
 Plugin 'ryanoasis/vim-devicons' "https://github.com/ryanoasis/nerd-fonts#font-installation
 Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
 "Plugin 'habamax/vim-sendtoterm'
@@ -119,6 +125,9 @@ map <silent> ge <Plug>CamelCaseMotion_ge
 sunmap e
 sunmap ge
 
+set lazyredraw
+set diffopt+=vertical
+set showcmd
 set ignorecase
 set smartcase
 set showmatch
@@ -140,8 +149,11 @@ set shiftwidth=4
 set expandtab
 set autoindent
 set fileformat=unix
-set cursorcolumn
-set cursorline
+set cursorcolumn!
+set cursorline!
+"if !&diff
+"    set cursorline
+"endif
 set showmatch
 set shortmess=a
 set cmdheight=1
@@ -179,10 +191,15 @@ nnoremap U <C-R>
 "autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 "autocmd StdinReadPre * let s:std_in=1
 "autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
+augroup nerdtreedisablecursorline
+    autocmd!
+    autocmd FileType nerdtree setlocal nocursorline
+augroup end
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 let g:NERDTreeFileExtensionHighlightFullName = 1
 let g:NERDTreeExactMatchHighlightFullName = 1
 let g:NERDTreePatternMatchHighlightFullName = 1
+
 
 
 "disabilita highlight quando entra in InsertMode
@@ -239,6 +256,7 @@ Arpeggio nmap gp <Esc>:call UsePasteReg()<CR>
 Arpeggio noremap gj <Esc>:call GoJump()<CR>
 Arpeggio inoremap jk <Esc>
 Arpeggio map gt <Esc>:NERDTreeToggle<CR>
+Arpeggio map gv <Esc>:NERDTreeFind<CR>
 Arpeggio inoremap tb <Esc>:Vista!!<CR>
 Arpeggio nmap tb <Esc>:Vista!!<CR>
 "next buffer
@@ -252,8 +270,6 @@ let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline#extensions#virtualenv#enabled = 1
-let g:airline#extensions#syntastic#stl_format_err = 1
-let g:airline#extensions#syntastic#stl_format_warn = 1
 let g:asyncrun_status = ''
 let g:airline_section_error = airline#section#create_right(['%{g:asyncrun_status}'])
 
@@ -264,41 +280,6 @@ inoremap <A-k> <C-o>k
 inoremap <A-l> <C-o>l
 
 
-"syntastic
-"let g:syntastic_always_populate_loc_list = 1
-"let g:syntastic_auto_loc_list = 1
-"let g:syntastic_check_on_open = 1
-"let g:syntastic_check_on_wq = 0
-"let g:syntastic_enable_signs = 1
-"let g:syntastic_error_symbol = \"E>"
-"let g:syntastic_warning_symbol = \"W>"
-"let g:syntastic_enable_balloons = 1
-"let g:syntastic_quiet_messages = {
-"        \ \"!level":  \"errors",
-"        \ \"type":    \"style",
-"        \ \"regex":   '.*',
-"        \ \"file:p":  '.*' }
-
-
-"ale
-"let g:ale_echo_msg_error_str = 'E'
-"let g:ale_echo_msg_warning_str = 'W'
-"let g:ale_open_list = 0
-"let g:ale_set_balloons = 0
-"let g:ale_cursor_detail = 0
-"let g:ale_set_signs = 1
-"let g:ale_completion_enabled = 1
-"let g:ale_python_flake8_args = '--ignore=E,W,F403,F405 --select=F,C'
-"augroup CloseLoclistWindowGroup
-"    autocmd!
-"    autocmd QuitPre * if empty(&buftype) | lclose | endif
-"augroup END
-
-
-"gutentags
-"let g:gutentags_cache_dir="/media/filippo/HDD1/pythonProjects/tags"
-"let g:gutentags_module=['ctags', 'cscope']
-
 
 "vim-maximizer
 nnoremap xx :MaximizerToggle<CR>
@@ -306,12 +287,6 @@ nnoremap xx :MaximizerToggle<CR>
 "indentline
 let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 
-"quickscope cambio colori highlight quando cambia il colorscheme
-augroup qs_colors
-  autocmd!
-  autocmd ColorScheme * highlight QuickScopePrimary guifg='#7af1ff' gui=underline ctermfg=155 cterm=underline
-  autocmd ColorScheme * highlight QuickScopeSecondary guifg='#f75822' gui=underline ctermfg=81 cterm=underline
-augroup END
 
 if exists("g:loaded_webdevicons")
   call webdevicons#refresh()
@@ -355,6 +330,8 @@ function! LSP_Register(fileType)
   exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> ge :LspNextError<CR>'
   exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gE :LspPreviousError<CR>'
 endfunction
+
+
 let registerList = [
   \ 'python',
   \ 'html',
@@ -379,4 +356,15 @@ let g:vista_default_executive = 'vim_lsp'
 
 "vebugger
 let g:vebugger_leader='<Leader>d'
-nnoremap <Leader>dr <Esc>:VBGstartPDB %<CR>
+nnoremap <Leader>dr <Esc>:VBGstartPDB %
+
+"vim-diff-enhanced
+if &diff
+    let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
+endif
+highlight DiffAdd    ctermfg=231 ctermbg=71 gui=none guifg=bg guibg=Red
+highlight DiffDelete ctermfg=231 ctermbg=203 gui=none guifg=bg guibg=Red
+highlight DiffChange ctermfg=231 ctermbg=216 gui=none guifg=bg guibg=Red
+highlight DiffText   ctermfg=231 ctermbg=88 gui=none guifg=bg guibg=Red
+autocmd WinEnter * setlocal nocursorline
+autocmd WinEnter * setlocal nocursorcolumn
