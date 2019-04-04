@@ -1,72 +1,69 @@
 filetype off                  " required
 set nocompatible              " be iMproved, required
-set rtp+=/home/filippo/.vim/bundle/Vundle.vim
 
+call plug#begin('~/.vim/plugged')
+Plug 'skywind3000/asyncrun.vim'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'ryanolsonx/vim-lsp-python'
+Plug 'ryanolsonx/vim-lsp-typescript' "sudo npm install -g typescript typescript-language-server
+Plug 'ryanolsonx/vim-lsp-javascript'
+Plug 'mattn/emmet-vim'
+Plug 'pedsm/sprint'
+Plug 'junegunn/vim-peekaboo'
+Plug 'rickhowe/diffchar.vim'
+Plug 'will133/vim-dirdiff'
+Plug 'chrisbra/vim-diff-enhanced'
+Plug 'idanarye/vim-merginal'
+"Plug 'Chiel92/vim-autoformat'
+"Plug 'wesQ3/vim-windowswap'
+Plug 'tpope/vim-fugitive'
+Plug 'milkypostman/vim-togglelist'
+Plug 'yggdroot/indentline'
+"Plug 'w0rp/ale'
+Plug 'szw/vim-maximizer'
+"Plug 'vim-syntastic/syntastic'
+Plug 'moll/vim-bbye'
+Plug 'diepm/vim-rest-console'
+Plug 'vim-scripts/indentpython.vim'
+Plug 'sheerun/vim-polyglot' "syntax highlight
+Plug 'tmhedberg/SimpylFold'
+Plug 'plytophogy/vim-virtualenv'
+"Plug 'davidhalter/jedi-vim'
+"Plug 'ludovicchabant/vim-gutentags'
+"Plug 'vim-scripts/cscope.vim'
+Plug 'haya14busa/vim-asterisk'
+Plug 'bkad/camelcasemotion'
+Plug 'scrooloose/nerdtree'
+Plug 'xuyuanp/nerdtree-git-plugin'
+Plug 'vwxyutarooo/nerdtree-devicons-syntax'
+Plug 'vim-airline/vim-airline' " sudo apt-get install fonts-powerline
+Plug 'vim-airline/vim-airline-themes' "https://github.com/vim-airline/vim-airline/wiki/Dummies-Guide-to-the-status-bar-symbols-(Powerline-fonts)-on-Fedora,-Ubuntu-and-Windows
+Plug 'VundleVim/Vundle.vim'
+Plug 'mbbill/undotree'
+Plug 'airblade/vim-rooter'
+Plug 'kana/vim-arpeggio'
+Plug 'kana/vim-textobj-user'
+Plug 'matchit.zip'
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
+"Plug 'thaerkh/vim-workspace'
+Plug 'jnurmine/Zenburn'
+Plug 'tomasiser/vim-code-dark'
+Plug 'ekalinin/Dockerfile.vim'
+Plug 'guns/xterm-color-table.vim'
+Plug 'ryanoasis/vim-devicons' "https://github.com/ryanoasis/nerd-fonts#font-installation
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+"Plug 'habamax/vim-sendtoterm'
+"Plug 'majutsushi/tagbar'
+Plug 'liuchengxu/vista.vim' "sostituisce tagbar e funziona con vim-lsp
+Plug 'vimwiki/vimwiki'
+Plug 'Shougo/vimproc.vim' "cd ~/.vim/bundle/vimproc.vim && make
+Plug 'idanarye/vim-vebugger'
 
-call vundle#begin()
-Plugin 'skywind3000/asyncrun.vim'
-Plugin 'prabirshrestha/asyncomplete.vim'
-Plugin 'prabirshrestha/async.vim'
-Plugin 'prabirshrestha/vim-lsp'
-Plugin 'prabirshrestha/asyncomplete-lsp.vim'
-Plugin 'ryanolsonx/vim-lsp-python'
-Plugin 'ryanolsonx/vim-lsp-typescript' "sudo npm install -g typescript typescript-language-server
-Plugin 'ryanolsonx/vim-lsp-javascript'
-Plugin 'mattn/emmet-vim'
-Plugin 'pedsm/sprint'
-Plugin 'junegunn/vim-peekaboo'
-Plugin 'rickhowe/diffchar.vim'
-Plugin 'will133/vim-dirdiff'
-Plugin 'chrisbra/vim-diff-enhanced'
-Plugin 'idanarye/vim-merginal'
-"Plugin 'Chiel92/vim-autoformat'
-"Plugin 'wesQ3/vim-windowswap'
-Plugin 'tpope/vim-fugitive'
-Plugin 'milkypostman/vim-togglelist'
-Plugin 'yggdroot/indentline'
-"Plugin 'w0rp/ale'
-Plugin 'szw/vim-maximizer'
-"Plugin 'vim-syntastic/syntastic'
-Plugin 'moll/vim-bbye'
-Plugin 'diepm/vim-rest-console'
-Plugin 'vim-scripts/indentpython.vim'
-Plugin 'sheerun/vim-polyglot' "syntax highlight
-Plugin 'tmhedberg/SimpylFold'
-Plugin 'plytophogy/vim-virtualenv'
-"Plugin 'davidhalter/jedi-vim'
-"Plugin 'ludovicchabant/vim-gutentags'
-"Plugin 'vim-scripts/cscope.vim'
-Plugin 'haya14busa/vim-asterisk'
-Plugin 'bkad/camelcasemotion'
-Plugin 'scrooloose/nerdtree'
-Plugin 'xuyuanp/nerdtree-git-plugin'
-Plugin 'vwxyutarooo/nerdtree-devicons-syntax'
-Plugin 'vim-airline/vim-airline' " sudo apt-get install fonts-powerline
-Plugin 'vim-airline/vim-airline-themes' "https://github.com/vim-airline/vim-airline/wiki/Dummies-Guide-to-the-status-bar-symbols-(Powerline-fonts)-on-Fedora,-Ubuntu-and-Windows
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'mbbill/undotree'
-Plugin 'airblade/vim-rooter'
-Plugin 'kana/vim-arpeggio'
-Plugin 'kana/vim-textobj-user'
-Plugin 'matchit.zip'
-Plugin 'junegunn/fzf'
-Plugin 'junegunn/fzf.vim'
-"Plugin 'thaerkh/vim-workspace'
-Plugin 'jnurmine/Zenburn'
-Plugin 'tomasiser/vim-code-dark'
-Plugin 'ekalinin/Dockerfile.vim'
-Plugin 'guns/xterm-color-table.vim'
-Plugin 'ryanoasis/vim-devicons' "https://github.com/ryanoasis/nerd-fonts#font-installation
-Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
-"Plugin 'habamax/vim-sendtoterm'
-"Plugin 'majutsushi/tagbar'
-Plugin 'liuchengxu/vista.vim' "sostituisce tagbar e funziona con vim-lsp
-Plugin 'vimwiki/vimwiki'
-Plugin 'Shougo/vimproc.vim' "cd ~/.vim/bundle/vimproc.vim && make
-Plugin 'idanarye/vim-vebugger'
-call vundle#end()            " required
-filetype plugin indent on    " required
-
+call plug#end()
 
 "devicons
 "set guifont=Meslo\ Font\ 11
