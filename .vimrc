@@ -11,7 +11,7 @@ Plug 'neoclide/coc-html'
 Plug 'neoclide/coc-css'
 Plug 'neoclide/coc-yaml'
 Plug 'neoclide/coc-highlight'
-Plug 'mattn/emmet-vim'
+"Plug 'mattn/emmet-vim'
 Plug 'pedsm/sprint'
 Plug 'junegunn/vim-peekaboo'
 Plug 'rickhowe/diffchar.vim'
@@ -43,12 +43,13 @@ Plug 'mbbill/undotree'
 Plug 'airblade/vim-rooter'
 Plug 'kana/vim-arpeggio'
 Plug 'kana/vim-textobj-user'
-Plug 'matchit.zip'
+Plug 'Raimondi/delimitMate'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'jnurmine/Zenburn'
 Plug 'tomasiser/vim-code-dark'
 Plug 'ekalinin/Dockerfile.vim'
+Plug 'simeji/winresizer'
 Plug 'guns/xterm-color-table.vim'
 Plug 'ryanoasis/vim-devicons' "https://github.com/ryanoasis/nerd-fonts#font-installation
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
@@ -172,7 +173,7 @@ tnoremap <C-H> <C-W><C-H>
 
 "esc in terminal goes to normal mode
 tnoremap <Esc> <C-W>N
-set notimeout ttimeout timeoutlen=100
+"set notimeout ttimeout timeoutlen=100
 
 "remap Redo to U instead of ctrl+r
 nnoremap U <C-R>
@@ -197,11 +198,6 @@ let g:NERDTreePatternMatchHighlightFullName = 1
 
 
 
-"disabilita highlight quando entra in InsertMode
-autocmd InsertEnter * setlocal nohlsearch
-autocmd InsertLeave * setlocal hlsearch lz
-inoremap <silent><Esc> <Esc>:nohl<bar>set nolz<CR>
-inoremap <silent><C-c> <C-c>:nohl<bar>set nolz<CR>
 
 "simplyfold
 let g:SimpylFold_fold_docstring=0
@@ -374,6 +370,7 @@ let g:mkdp_auto_close = 1
 "easymotion
 "let g:EasyMotion_do_mapping = 0 " Disable default mappings
 
+map <Leader> <Plug>(easymotion-prefix)
 " Jump to anywhere you want with minimal keystrokes, with just one key binding.
 " `s{char}{label}`
 " or
@@ -387,3 +384,6 @@ let g:EasyMotion_smartcase = 1
 " JK motions: Line motions
 map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
+
+
+
