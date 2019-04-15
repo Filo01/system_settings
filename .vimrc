@@ -2,14 +2,15 @@ filetype off                  " required
 set nocompatible              " be iMproved, required
 
 call plug#begin('~/.vim/plugged')
-Plug 'skywind3000/asyncrun.vim'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'ryanolsonx/vim-lsp-python'
-Plug 'ryanolsonx/vim-lsp-typescript' "sudo npm install -g typescript typescript-language-server
-Plug 'ryanolsonx/vim-lsp-javascript'
+
+Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'neoclide/coc-python'
+Plug 'neoclide/coc-tsserver'
+Plug 'neoclide/coc-json'
+Plug 'neoclide/coc-html'
+Plug 'neoclide/coc-css'
+Plug 'neoclide/coc-yaml'
+Plug 'neoclide/coc-highlight'
 Plug 'mattn/emmet-vim'
 Plug 'pedsm/sprint'
 Plug 'junegunn/vim-peekaboo'
@@ -17,24 +18,20 @@ Plug 'rickhowe/diffchar.vim'
 Plug 'will133/vim-dirdiff'
 Plug 'chrisbra/vim-diff-enhanced'
 Plug 'idanarye/vim-merginal'
-"Plug 'Chiel92/vim-autoformat'
-"Plug 'wesQ3/vim-windowswap'
+Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-fugitive'
+Plug 'gregsexton/gitv'
 Plug 'milkypostman/vim-togglelist'
 Plug 'yggdroot/indentline'
-"Plug 'w0rp/ale'
-Plug 'szw/vim-maximizer'
-"Plug 'vim-syntastic/syntastic'
 Plug 'moll/vim-bbye'
 Plug 'diepm/vim-rest-console'
 Plug 'vim-scripts/indentpython.vim'
 Plug 'sheerun/vim-polyglot' "syntax highlight
 Plug 'tmhedberg/SimpylFold'
 Plug 'plytophogy/vim-virtualenv'
-"Plug 'davidhalter/jedi-vim'
-"Plug 'ludovicchabant/vim-gutentags'
-"Plug 'vim-scripts/cscope.vim'
 Plug 'haya14busa/vim-asterisk'
+Plug 'tpope/vim-repeat'
+Plug 'easymotion/vim-easymotion'
 Plug 'bkad/camelcasemotion'
 Plug 'scrooloose/nerdtree'
 Plug 'xuyuanp/nerdtree-git-plugin'
@@ -49,19 +46,17 @@ Plug 'kana/vim-textobj-user'
 Plug 'matchit.zip'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
-"Plug 'thaerkh/vim-workspace'
 Plug 'jnurmine/Zenburn'
 Plug 'tomasiser/vim-code-dark'
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'guns/xterm-color-table.vim'
 Plug 'ryanoasis/vim-devicons' "https://github.com/ryanoasis/nerd-fonts#font-installation
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-"Plug 'habamax/vim-sendtoterm'
-"Plug 'majutsushi/tagbar'
 Plug 'liuchengxu/vista.vim' "sostituisce tagbar e funziona con vim-lsp
-Plug 'vimwiki/vimwiki'
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 Plug 'Shougo/vimproc.vim' "cd ~/.vim/bundle/vimproc.vim && make
 Plug 'idanarye/vim-vebugger'
+Plug 'tpope/vim-unimpaired'
 
 call plug#end()
 
@@ -122,7 +117,7 @@ map <silent> ge <Plug>CamelCaseMotion_ge
 sunmap e
 sunmap ge
 
-set lazyredraw
+"set lazyredraw
 set diffopt+=vertical
 set showcmd
 set ignorecase
@@ -181,6 +176,9 @@ set notimeout ttimeout timeoutlen=100
 
 "remap Redo to U instead of ctrl+r
 nnoremap U <C-R>
+
+"format selected json in visual mode
+vnoremap = :'<.'>!python -m json.tool<CR>
 
 "nerdtree
 "autocmd vimenter * NERDTree
@@ -268,7 +266,9 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline#extensions#virtualenv#enabled = 1
 let g:asyncrun_status = ''
-let g:airline_section_error = airline#section#create_right(['%{g:asyncrun_status}'])
+"let g:airline_section_error = airline#section#create_right(['%{g:asyncrun_status}'])
+let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
+let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
 
 " provide hjkl movements in Insert mode via the <Alt> modifier key
 inoremap <A-h> <C-o>h
@@ -289,11 +289,6 @@ if exists("g:loaded_webdevicons")
   call webdevicons#refresh()
 endif
 
-
-
-"cscope
- nnoremap <leader>fa :call cscope#findInteractive(expand('<cword>'))<CR>
-
 "rest-console
 let g:vrc_set_default_mapping = 0
 autocmd FileType rest nnoremap <buffer> <CR> :call VrcQuery()<CR>
@@ -310,45 +305,45 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<cr>"
 
 "vim-lsp
-let g:lsp_signs_enabled = 1         " enable signs
-let g:lsp_diagnostics_echo_cursor = 1 " enable echo under cursor when in normal mode
-
-let g:lsp_signs_warning = {'text': '!'}
-let g:lsp_signs_hint = {'text': '.'}
-let g:lsp_signs_error = {'text': '✗'}
-let g:lsp_signs_information = {'text': 'i'}
-
-function! LSP_Register(fileType)
-  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gd :LspDefinition<CR>'
-  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gD :LspDocumentDiagnostics<CR>'
-  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gh :LspHover<CR>'
-  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gf :LspDocumentFormat<CR>'
-  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gr :LspRename<CR>'
-  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> ge :LspNextError<CR>'
-  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gE :LspPreviousError<CR>'
-endfunction
-
-
-let registerList = [
-  \ 'python',
-  \ 'html',
-  \ 'css',
-  \ 'scss',
-  \ 'less',
-  \ 'sass',
-  \ 'typescript',
-  \ 'javascript',
-  \ 'json'
-  \ ]
-
-for item in registerList
-  call LSP_Register(item)
-endfor
+"let g:lsp_signs_enabled = 1         " enable signs
+"let g:lsp_diagnostics_echo_cursor = 1 " enable echo under cursor when in normal mode
+"
+"let g:lsp_signs_warning = {'text': '!'}
+"let g:lsp_signs_hint = {'text': '.'}
+"let g:lsp_signs_error = {'text': '✗'}
+"let g:lsp_signs_information = {'text': 'i'}
+"
+"function! LSP_Register(fileType)
+"  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gd :LspDefinition<CR>'
+"  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gD :LspDocumentDiagnostics<CR>'
+"  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gh :LspHover<CR>'
+"  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gf :LspDocumentFormat<CR>'
+"  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gr :LspRename<CR>'
+"  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> ge :LspNextError<CR>'
+"  exec 'au FileType '. a:fileType .' nnoremap <buffer><silent> gE :LspPreviousError<CR>'
+"endfunction
+"
+"
+"let registerList = [
+"  \ 'python',
+"  \ 'html',
+"  \ 'css',
+"  \ 'scss',
+"  \ 'less',
+"  \ 'sass',
+"  \ 'typescript',
+"  \ 'javascript',
+"  \ 'json'
+"  \ ]
+"
+"for item in registerList
+"  call LSP_Register(item)
+"endfor
 
 
 "vista
 let g:vista_close_on_jump = 1
-let g:vista_default_executive = 'vim_lsp'
+"let g:vista_default_executive = 'vim_lsp'
 
 
 "vebugger
@@ -359,9 +354,36 @@ nnoremap <Leader>dr <Esc>:VBGstartPDB %
 if &diff
     let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
 endif
-highlight DiffAdd    ctermfg=231 ctermbg=71 gui=none guifg=bg guibg=Red
-highlight DiffDelete ctermfg=231 ctermbg=203 gui=none guifg=bg guibg=Red
-highlight DiffChange ctermfg=231 ctermbg=216 gui=none guifg=bg guibg=Red
-highlight DiffText   ctermfg=231 ctermbg=88 gui=none guifg=bg guibg=Red
+highlight DiffAdd    ctermfg=231 ctermbg=65 gui=none guifg=bg guibg=NONE
+highlight DiffDelete ctermfg=231 ctermbg=1 gui=none guifg=bg guibg=NONE
+highlight DiffChange ctermfg=231 ctermbg=238 gui=none guifg=bg guibg=NONE
+highlight DiffText    cterm=bold ctermfg=220 ctermbg=2 gui=none guifg=bg guibg=NONE
 autocmd WinEnter * setlocal nocursorline
 autocmd WinEnter * setlocal nocursorcolumn
+
+
+"coc.nvim
+nmap <leader>im <Plug>(coc-implementation)
+nnoremap <leader>dc <Plug>(coc-declaration)
+nmap <leader>df <Plug>(coc-definition)
+
+"markdown-preview
+let g:mkdp_auto_close = 1
+
+
+"easymotion
+"let g:EasyMotion_do_mapping = 0 " Disable default mappings
+
+" Jump to anywhere you want with minimal keystrokes, with just one key binding.
+" `s{char}{label}`
+" or
+" `s{char}{char}{label}`
+" Need one more keystroke, but on average, it may be more comfortable.
+"nmap s <Plug>(easymotion-overwin-f2)
+
+" Turn on case-insensitive feature
+let g:EasyMotion_smartcase = 1
+
+" JK motions: Line motions
+map <Leader>j <Plug>(easymotion-j)
+map <Leader>k <Plug>(easymotion-k)
