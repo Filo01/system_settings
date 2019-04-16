@@ -20,6 +20,7 @@ Plug 'chrisbra/vim-diff-enhanced'
 Plug 'idanarye/vim-merginal'
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-fugitive'
+Plug 'jreybert/vimagit'
 Plug 'gregsexton/gitv'
 Plug 'milkypostman/vim-togglelist'
 Plug 'yggdroot/indentline'
@@ -29,6 +30,7 @@ Plug 'vim-scripts/indentpython.vim'
 Plug 'sheerun/vim-polyglot' "syntax highlight
 Plug 'tmhedberg/SimpylFold'
 Plug 'plytophogy/vim-virtualenv'
+Plug 'romainl/vim-cool'
 Plug 'haya14busa/vim-asterisk'
 Plug 'tpope/vim-repeat'
 Plug 'easymotion/vim-easymotion'
@@ -198,6 +200,10 @@ let g:NERDTreePatternMatchHighlightFullName = 1
 
 
 
+"disabilita highlight quando entra in InsertMode
+augroup no_highlight
+    autocmd TermResponse * nnoremap <esc> :noh<CR><esc>
+augroup END
 
 "simplyfold
 let g:SimpylFold_fold_docstring=0
@@ -272,7 +278,11 @@ inoremap <A-j> <C-o>j
 inoremap <A-k> <C-o>k
 inoremap <A-l> <C-o>l
 
+nnoremap ]t <Esc>:tabn<CR>
+nnoremap [t <Esc>:tabp<CR>
 
+cnoreabbrev do <expr> diffobtain
+cnoreabbrev dg <expr> diffget
 
 "vim-maximizer
 nnoremap xx :MaximizerToggle<CR>
@@ -386,4 +396,9 @@ map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
 
 
+"vim-cool show number of /search matches in the command line
+let g:CoolTotalMatches = 1
 
+
+"vimagit
+autocmd FileType magit set nofoldenable
