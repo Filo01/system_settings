@@ -3,14 +3,6 @@ set nocompatible              " be iMproved, required
 
 call plug#begin('~/.vim/plugged')
 
-Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
-Plug 'neoclide/coc-python'
-Plug 'neoclide/coc-tsserver'
-Plug 'neoclide/coc-json'
-Plug 'neoclide/coc-html'
-Plug 'neoclide/coc-css'
-Plug 'neoclide/coc-yaml'
-Plug 'neoclide/coc-highlight'
 "Plug 'mattn/emmet-vim'
 Plug 'pedsm/sprint'
 Plug 'junegunn/vim-peekaboo'
@@ -22,12 +14,11 @@ Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-fugitive'
 Plug 'jreybert/vimagit'
 Plug 'gregsexton/gitv'
-Plug 'milkypostman/vim-togglelist'
 Plug 'yggdroot/indentline'
 Plug 'moll/vim-bbye'
 Plug 'diepm/vim-rest-console'
 Plug 'vim-scripts/indentpython.vim'
-Plug 'sheerun/vim-polyglot' "syntax highlight
+"Plug 'sheerun/vim-polyglot' "syntax highlight
 Plug 'tmhedberg/SimpylFold'
 Plug 'plytophogy/vim-virtualenv'
 Plug 'romainl/vim-cool'
@@ -37,7 +28,6 @@ Plug 'easymotion/vim-easymotion'
 Plug 'bkad/camelcasemotion'
 Plug 'scrooloose/nerdtree'
 Plug 'xuyuanp/nerdtree-git-plugin'
-Plug 'vwxyutarooo/nerdtree-devicons-syntax'
 Plug 'vim-airline/vim-airline' " sudo apt-get install fonts-powerline
 Plug 'vim-airline/vim-airline-themes' "https://github.com/vim-airline/vim-airline/wiki/Dummies-Guide-to-the-status-bar-symbols-(Powerline-fonts)-on-Fedora,-Ubuntu-and-Windows
 Plug 'VundleVim/Vundle.vim'
@@ -53,13 +43,23 @@ Plug 'tomasiser/vim-code-dark'
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'simeji/winresizer'
 Plug 'guns/xterm-color-table.vim'
-Plug 'ryanoasis/vim-devicons' "https://github.com/ryanoasis/nerd-fonts#font-installation
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'liuchengxu/vista.vim' "sostituisce tagbar e funziona con vim-lsp
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 Plug 'Shougo/vimproc.vim' "cd ~/.vim/bundle/vimproc.vim && make
 Plug 'idanarye/vim-vebugger'
 Plug 'tpope/vim-unimpaired'
+Plug 'ryanoasis/vim-devicons' "https://github.com/ryanoasis/nerd-fonts#font-installation
+Plug 'vwxyutarooo/nerdtree-devicons-syntax'
+Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'neoclide/coc-python'
+Plug 'neoclide/coc-tsserver'
+Plug 'neoclide/coc-json'
+Plug 'neoclide/coc-html'
+Plug 'neoclide/coc-css'
+Plug 'neoclide/coc-yaml'
+Plug 'neoclide/coc-highlight'
+"Plug 'itchyny/vim-cursorword'
 
 call plug#end()
 
@@ -88,7 +88,67 @@ let g:fzf_colors =
   \ 'marker':  ['fg', 'Keyword'],
   \ 'spinner': ['fg', 'Label'],
   \ 'header':  ['fg', 'Comment'] }
-let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore-vcs --hidden'
+"let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore-vcs --hidden'
+
+"fzf funzione per rg+fzf+vim-devicons
+if executable('rg')
+
+  let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!*/.git/*" --glob "!.git/*"'
+  set grepprg=rg\ --vimgrep
+  command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)  
+  
+  " Overriding fzf.vim's default :Files command.
+  " Pass zero or one args to Files command (which are then passed to Fzf_dev). Support file path completion too.
+  command! -nargs=? -complete=file Files call Fzf_dev(<q-args>)
+
+  nnoremap <silent> <leader>e :Files<CR>
+
+endif
+
+" Files + devicons
+function! Fzf_dev(qargs)
+  let l:fzf_files_options = '--preview "bat --theme="OneHalfDark" --style=numbers,changes --color always {2..-1} | head -'.&lines.'" --expect=ctrl-t,ctrl-v,ctrl-x --multi --bind=ctrl-a:select-all,ctrl-d:deselect-all'
+
+  function! s:files(dir)
+    let l:cmd = $FZF_DEFAULT_COMMAND
+    if a:dir != ''
+      let l:cmd .= ' ' . shellescape(a:dir)
+    endif
+    let l:files = split(system(l:cmd), '\n')
+    return s:prepend_icon(l:files)
+  endfunction
+
+  function! s:prepend_icon(candidates)
+    let l:result = []
+    for l:candidate in a:candidates
+      let l:filename = fnamemodify(l:candidate, ':p:t')
+      let l:icon = WebDevIconsGetFileTypeSymbol(l:filename, isdirectory(l:filename))
+      call add(l:result, printf('%s %s', l:icon, l:candidate))
+    endfor
+
+    return l:result
+  endfunction
+  
+  function! s:edit_file(lines)
+    if len(a:lines) < 2 | return | endif
+
+    let l:cmd = get({'ctrl-x': 'split',
+                 \ 'ctrl-v': 'vertical split',
+                 \ 'ctrl-t': 'tabe'}, a:lines[0], 'e')
+    
+    for l:item in a:lines[1:]
+      let l:pos = stridx(l:item, ' ')
+      let l:file_path = l:item[pos+1:-1]
+      execute 'silent '. l:cmd . ' ' . l:file_path
+    endfor
+  endfunction
+
+  call fzf#run({
+        \ 'source': <sid>files(a:qargs),
+        \ 'sink*':   function('s:edit_file'),
+        \ 'options': '-m ' . l:fzf_files_options,
+        \ 'down':    '50%' })
+endfunction
 "nmap <leader>f :Files<CR>
 "nmap <leader>b :Buffers<CR>
 "nmap <leader>c :Commands<CR>
@@ -99,10 +159,10 @@ let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore-vcs --hidden'
 "nnoremap <F4> :grep! "\<<cword>\>" . -r<CR>:copen<CR>
 
 " Color Scheme
+colorscheme codedark
 "colorscheme zenburn
 set t_Co=256
 set t_ut=
-colorscheme codedark
 
 " vim-workspace
 "nnoremap <leader>s :ToggleWorkspace<CR>
@@ -281,8 +341,10 @@ inoremap <A-l> <C-o>l
 nnoremap ]t <Esc>:tabn<CR>
 nnoremap [t <Esc>:tabp<CR>
 
-cnoreabbrev do <expr> diffobtain
-cnoreabbrev dg <expr> diffget
+" Fugitive Conflict Resolution
+nnoremap <leader>gd :Gvdiff<CR>
+nnoremap gdh :diffget //2<CR>
+nnoremap gdl :diffget //3<CR>
 
 "vim-maximizer
 nnoremap xx :MaximizerToggle<CR>
@@ -362,7 +424,7 @@ if &diff
 endif
 highlight DiffAdd    ctermfg=231 ctermbg=65 gui=none guifg=bg guibg=NONE
 highlight DiffDelete ctermfg=231 ctermbg=1 gui=none guifg=bg guibg=NONE
-highlight DiffChange ctermfg=231 ctermbg=238 gui=none guifg=bg guibg=NONE
+highlight DiffChange ctermfg=231 ctermbg=130 gui=none guifg=bg guibg=NONE
 highlight DiffText    cterm=bold ctermfg=220 ctermbg=2 gui=none guifg=bg guibg=NONE
 autocmd WinEnter * setlocal nocursorline
 autocmd WinEnter * setlocal nocursorcolumn
@@ -402,3 +464,5 @@ let g:CoolTotalMatches = 1
 
 "vimagit
 autocmd FileType magit set nofoldenable
+
+
